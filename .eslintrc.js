@@ -5,5 +5,4 @@ module.exports = {
     project: "./tsconfig.json",
     sourceType: "module",
   },
-  ignorePatterns: ["**/node_modules", "**/build", "**/public/build"],
 }
