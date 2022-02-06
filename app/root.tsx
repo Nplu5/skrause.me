@@ -1,16 +1,8 @@
-import {
-  Links,
-  LiveReload,
-  Meta,
-  NavLink,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-} from 'remix'
-import type {MetaFunction} from 'remix'
+import {Links, LiveReload, Meta, NavLink, Outlet, Scripts, ScrollRestoration} from "remix"
+import type {MetaFunction} from "remix"
 
 export const meta: MetaFunction = () => {
-  return {title: 'New Remix App'}
+  return {title: "New Remix App"}
 }
 
 export default function App() {
@@ -25,7 +17,7 @@ export default function App() {
       <body>
         <header>
           <nav>
-            <h1 style={{display: 'inline'}}>Skrause.me</h1>
+            <h1 style={{display: "inline"}}>Skrause.me</h1>
             <NavLink to="/">Home</NavLink>
             <NavLink to="blog">Blog</NavLink>
             <NavLink to="til">TIL</NavLink>
@@ -35,7 +27,7 @@ export default function App() {
         <Outlet />
         <ScrollRestoration />
         <Scripts />
-        {process.env.NODE_ENV === 'development' && <LiveReload />}
+        {process.env.NODE_ENV === "development" && <LiveReload />}
       </body>
     </html>
   )
