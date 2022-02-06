@@ -57,7 +57,7 @@
     "*.ignored.*"
   ],
   "lint-staged": {
-    "*.{ts,tsx}": "eslint --cache --fix",
+    "*.{ts,tsx}": "eslint --cache --cache-location ./node_modules/.cache/.eslintcache --fix",
     "*": "prettier --ignore-unknown --write"
   }
 }
