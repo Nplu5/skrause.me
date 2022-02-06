@@ -11,8 +11,7 @@
     "start": "remix-serve build",
     "lint:staged": "lint-staged",
     "format:check": "prettier --check --ignore-unknown .",
-    "lint:check": "eslint --max-warnings 0 --cache --cache-location ./node_modules/.cache/.eslintcache --ext js,jsx,ts,tsx .",
-    "validate": ""
+    "lint:check": "eslint --max-warnings 0 --cache --cache-location ./node_modules/.cache/.eslintcache --ext js,jsx,ts,tsx ."
   },
   "dependencies": {
     "@remix-run/react": "^1.1.3",
