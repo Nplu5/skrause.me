@@ -8,6 +8,7 @@ const tilPath = path.join(__dirname, "..", "content", "til")
 export type Til = {
   slug: string
   title: string
+  year: string
 }
 
 export type TilMarkdownAttributes = {
