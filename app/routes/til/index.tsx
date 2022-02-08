@@ -2,10 +2,6 @@ import {useState} from "react"
 import {useLoaderData} from "remix"
 import {getTils, Til} from "~/utils/til"
 
-type TilGrouped = {
-  [x: string]: Til[]
-}
-
 type LoaderData = {
   tils: Til[]
 }
