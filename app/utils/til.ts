@@ -3,7 +3,7 @@ import fs from "fs/promises"
 import parseFrontMatter from "front-matter"
 import invariant from "tiny-invariant"
 
-const tilPath = path.join(__dirname, "..", "content", "til")
+const tilsPath = path.join(__dirname, "..", "content", "til")
 
 export type Til = {
   slug: string
@@ -19,24 +19,36 @@ function isValidTilAttributes(attributes: any): attributes is TilMarkdownAttribu
   return attributes?.title
 }
 
-export async function getTils() {
-  const directoryContent = await fs.readdir(tilPath, {withFileTypes: true})
+export async function getTil(slug: string): Promise<Til> {
+  const year = slug.slice(0, 4)
+  const filePath = path.join(tilsPath, year, `${slug}.md`)
+  const file = await fs.readFile(filePath)
+  const {attributes} = parseFrontMatter(file.toString())
+  invariant(isValidTilAttributes(attributes), `Post ${filePath} is missing attributes.`)
+  return {
+    slug,
+    title: attributes.title,
+    year,
+  }
+}
 
-  // TODO: Clean up for better readability
+export async function getTils() {
+  const directoryContent = await fs.readdir(tilsPath, {withFileTypes: true})
+
   return Promise.all(
     directoryContent
       .filter((dirent) => !dirent.isFile())
       .map(async (dirent) => {
-        // iterate over years
+        // iterate over years folders
         const year = dirent.name
-        const yearPath = path.join(tilPath, dirent.name)
+        const yearPath = path.join(tilsPath, dirent.name)
         const yearContent = await fs.readdir(yearPath, {withFileTypes: true})
 
         return await Promise.all(
           yearContent
             .filter((yearent) => yearent.isFile())
             .map(async (yearent) => {
-              // Iterate over years content
+              // Iterate over years folder content
               const file = await fs.readFile(path.join(yearPath, yearent.name))
               const {attributes} = parseFrontMatter(file.toString())
               invariant(

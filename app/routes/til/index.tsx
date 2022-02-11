@@ -1,5 +1,5 @@
 import {useState} from "react"
-import {useLoaderData} from "remix"
+import {Link, useLoaderData} from "remix"
 import {getTils, Til} from "~/utils/til"
 
 type LoaderData = {
@@ -37,7 +37,9 @@ export default function TilOverview() {
       </div>
       <ul>
         {currentTils.map((til) => (
-          <li key={til.slug}>{til.title}</li>
+          <li key={til.slug}>
+            <Link to={til.slug}>{til.title}</Link>
+          </li>
         ))}
       </ul>
     </>
