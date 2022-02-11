@@ -18,7 +18,25 @@ function isValidPostAttributes(attributes: any): attributes is PostMarkdownAttri
   return attributes?.title
 }
 
-export async function getPosts() {
+export async function getPost(slug: string): Promise<Post> {
+  const folderPath = path.join(postsPath, slug)
+  let filePath = path.join(postsPath, `${slug}.md`)
+  try {
+    if ((await fs.stat(folderPath)).isDirectory()) {
+      filePath = path.join(folderPath, "index.md")
+    }
+  } catch {}
+
+  const file = await fs.readFile(filePath)
+  const {attributes} = parseFrontMatter(file.toString())
+  invariant(isValidPostAttributes(attributes), `Post ${filePath} is missing attributes.`)
+  return {
+    slug,
+    title: attributes.title,
+  }
+}
+
+export async function getPosts(): Promise<Post[]> {
   const directoryContent = await fs.readdir(postsPath, {withFileTypes: true})
 
   return Promise.all(
@@ -32,7 +50,7 @@ export async function getPosts() {
       const {attributes} = parseFrontMatter(file.toString())
       invariant(isValidPostAttributes(attributes), `${dirent.name} needs a 'title' attribute.`)
       return {
-        slug: dirent.name.replace(/\.md)$/, ""),
+        slug: dirent.name.replace(/\.md$/, ""),
         title: attributes.title,
       }
     }),

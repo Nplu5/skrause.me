@@ -10,8 +10,6 @@ export const loader: LoaderFunction = async ({params}) => {
   return await getTil(params.slug)
 }
 
-// TODO: have multiple parameters: years and slug
-
 export default function TilPost() {
   const til = useLoaderData<Til>()
   return (

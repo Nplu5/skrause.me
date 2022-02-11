@@ -24,7 +24,7 @@ export async function getTil(slug: string): Promise<Til> {
   const filePath = path.join(tilsPath, year, `${slug}.md`)
   const file = await fs.readFile(filePath)
   const {attributes} = parseFrontMatter(file.toString())
-  invariant(isValidTilAttributes(attributes), `Post ${filePath} is missing attributes.`)
+  invariant(isValidTilAttributes(attributes), `Til ${filePath} is missing attributes.`)
   return {
     slug,
     title: attributes.title,

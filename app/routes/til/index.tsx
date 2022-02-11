@@ -26,7 +26,6 @@ export default function TilOverview() {
       <p>Kurze Erklärung zu Today I learned.</p>
       <div>Suche-Platzhalter</div>
       <div>
-        {}
         {years.map((year) => {
           return (
             <button key={year} onClick={() => setCurrentYear(year)}>
