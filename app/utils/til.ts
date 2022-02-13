@@ -2,6 +2,7 @@ import path from "path"
 import fs from "fs/promises"
 import parseFrontMatter from "front-matter"
 import invariant from "tiny-invariant"
+import {marked} from "marked"
 
 const tilsPath = path.join(__dirname, "..", "content", "til")
 
@@ -9,6 +10,10 @@ export type Til = {
   slug: string
   title: string
   year: string
+}
+
+export type CompleteTil = Til & {
+  html: string
 }
 
 export type TilMarkdownAttributes = {
@@ -19,16 +24,18 @@ function isValidTilAttributes(attributes: any): attributes is TilMarkdownAttribu
   return attributes?.title
 }
 
-export async function getTil(slug: string): Promise<Til> {
+export async function getTil(slug: string): Promise<CompleteTil> {
   const year = slug.slice(0, 4)
   const filePath = path.join(tilsPath, year, `${slug}.md`)
   const file = await fs.readFile(filePath)
-  const {attributes} = parseFrontMatter(file.toString())
+  const {attributes, body} = parseFrontMatter(file.toString())
   invariant(isValidTilAttributes(attributes), `Til ${filePath} is missing attributes.`)
+  const html = marked(body)
   return {
     slug,
     title: attributes.title,
     year,
+    html,
   }
 }
 
