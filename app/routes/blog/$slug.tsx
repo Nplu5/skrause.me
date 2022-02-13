@@ -1,7 +1,8 @@
 import invariant from "tiny-invariant"
 import {Link, useLoaderData} from "remix"
+import {getPost} from "~/utils/post"
 
-import {getPost, Post} from "~/utils/post"
+import type {CompletePost} from "~/utils/post"
 import type {LoaderFunction} from "remix"
 
 export const loader: LoaderFunction = async ({params}) => {
@@ -10,11 +11,11 @@ export const loader: LoaderFunction = async ({params}) => {
 }
 
 export default function PostRoute() {
-  const post = useLoaderData<Post>()
+  const post = useLoaderData<CompletePost>()
   return (
     <div>
       <Link to="/blog">Back to Blog</Link>
-      <h1>{post.title}</h1>
+      <div dangerouslySetInnerHTML={{__html: post.html}} />
     </div>
   )
 }

@@ -5,7 +5,7 @@ import type {LoaderFunction} from "remix"
 import type {Post} from "~/utils/post"
 
 type LoaderData = {
-  posts: Post[]
+  posts: Omit<Post, "html">[]
 }
 
 export const loader: LoaderFunction = async (): Promise<LoaderData> => {
