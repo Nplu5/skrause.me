@@ -1,17 +1,23 @@
 import {Link, useLoaderData} from "remix"
-import {getPosts} from "~/utils/post"
+import {db} from "~/utils/db.server"
 
 import type {LoaderFunction} from "remix"
-import type {Post} from "~/utils/post"
+
+type Post = {
+  slug: string
+  title: string
+}
 
 type LoaderData = {
-  posts: Omit<Post, "html">[]
+  posts: Array<Post>
 }
 
 export const loader: LoaderFunction = async (): Promise<LoaderData> => {
-  return {
-    posts: await getPosts(),
-  }
+  const posts = await db.post.findMany({
+    orderBy: {createdAt: "desc"},
+    select: {slug: true, title: true},
+  })
+  return {posts: posts}
 }
 
 export default function Blog() {

@@ -4,39 +4,23 @@ import parseFrontMatter from "front-matter"
 import invariant from "tiny-invariant"
 import {marked} from "marked"
 
-const tilsPath = path.join(__dirname, "..", "content", "til")
+const tilsPath = path.join(__dirname, "..", "..", "content", "til")
 
-export type Til = {
-  slug: string
-  title: string
-  year: string
-}
-
-export type CompleteTil = Til & {
+export type CompleteTil = TilMarkdownAttributes & {
   html: string
+  year: number
+  slug: string
 }
 
 export type TilMarkdownAttributes = {
   title: string
+  published: boolean
+  author: string
+  summary: string
 }
 
 function isValidTilAttributes(attributes: any): attributes is TilMarkdownAttributes {
-  return attributes?.title
-}
-
-export async function getTil(slug: string): Promise<CompleteTil> {
-  const year = slug.slice(0, 4)
-  const filePath = path.join(tilsPath, year, `${slug}.md`)
-  const file = await fs.readFile(filePath)
-  const {attributes, body} = parseFrontMatter(file.toString())
-  invariant(isValidTilAttributes(attributes), `Til ${filePath} is missing attributes.`)
-  const html = marked(body)
-  return {
-    slug,
-    title: attributes.title,
-    year,
-    html,
-  }
+  return attributes?.title && attributes?.published && attributes?.author && attributes?.summary
 }
 
 export async function getTils() {
@@ -57,15 +41,20 @@ export async function getTils() {
             .map(async (yearent) => {
               // Iterate over years folder content
               const file = await fs.readFile(path.join(yearPath, yearent.name))
-              const {attributes} = parseFrontMatter(file.toString())
+              const {attributes, body} = parseFrontMatter(file.toString())
               invariant(
                 isValidTilAttributes(attributes),
                 `${yearent.name} needs a 'title' attribute. `,
               )
+              const html = marked(body)
               return {
                 slug: yearent.name.replace(/\.md$/, ""),
                 title: attributes.title,
-                year,
+                year: parseInt(year),
+                html,
+                summary: attributes.summary,
+                author: attributes.author,
+                published: attributes.published,
               }
             }),
         )

@@ -1,0 +1,10 @@
+version: "3"
+services:
+  database:
+    image: "postgres:13"
+    environment:
+      - POSTGRES_USER=laura
+      - POSTGRES_PASSWORD=the_packora
+      - POSTGRES_DB=skrauseme_db
+    ports:
+      - "5432:5432"

@@ -1,17 +1,28 @@
 import {useState} from "react"
 import {Link, useLoaderData} from "remix"
-import {getTils, Til} from "~/utils/til"
+import {db} from "~/utils/db.server"
+
+import type {LoaderFunction} from "remix"
+
+type Til = {
+  slug: string
+  title: string
+  year: number
+}
 
 type LoaderData = {
-  tils: Til[]
+  tils: Array<Til>
 }
 
-export async function loader() {
-  const tils = await getTils()
-  return {
-    tils: tils.flat(1),
-  }
+export const loader: LoaderFunction = async () => {
+  const tils = await db.til.findMany({
+    orderBy: {createdAt: "desc"},
+    select: {slug: true, title: true, year: true},
+  })
+  return {tils}
 }
+
+// TODO: do filtering and searching on server side
 
 export default function TilOverview() {
   const {tils} = useLoaderData<LoaderData>()
@@ -28,7 +39,7 @@ export default function TilOverview() {
       <div>
         {years.map((year) => {
           return (
-            <button key={year} onClick={() => setCurrentYear(year)}>
+            <button key={year} onClick={() => setCurrentYear(year.toString())}>
               {year}
             </button>
           )
@@ -45,9 +56,9 @@ export default function TilOverview() {
   )
 }
 
-function filterTils(tils: Til[], currentYear: string) {
+function filterTils(tils: Array<Til>, currentYear: string) {
   if (currentYear === "All") {
     return tils
   }
-  return tils.filter((til) => til.year === currentYear)
+  return tils.filter((til) => til.year.toString() === currentYear)
 }
