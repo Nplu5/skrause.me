@@ -1,5 +1,4 @@
-import {useState} from "react"
-import {Link, useLoaderData} from "remix"
+import {Link, NavLink, useLoaderData, useSearchParams} from "remix"
 import {db} from "~/utils/db.server"
 
 import type {LoaderFunction} from "remix"
@@ -22,15 +21,17 @@ export const loader: LoaderFunction = async () => {
   return {tils}
 }
 
-// TODO: do filtering and searching on server side
+const filterIdentifier = "filter"
 
 export default function TilOverview() {
   const {tils} = useLoaderData<LoaderData>()
-  const [currentYear, setCurrentYear] = useState<string>("All")
+  const [searchParams] = useSearchParams()
+
+  const filter = searchParams.get(filterIdentifier) ?? "All"
 
   const years = ["All", ...new Set(tils.map((til) => til.year).reverse())]
 
-  const currentTils = filterTils(tils, currentYear)
+  const currentTils = filterTils(tils, filter)
   return (
     <>
       <h1>Today I Learned (TIL)</h1>
@@ -38,11 +39,7 @@ export default function TilOverview() {
       <div>Suche-Platzhalter</div>
       <div>
         {years.map((year) => {
-          return (
-            <button key={year} onClick={() => setCurrentYear(year.toString())}>
-              {year}
-            </button>
-          )
+          return <NavLink to={`?${filterIdentifier}=${year}`}>{year}</NavLink>
         })}
       </div>
       <ul>
