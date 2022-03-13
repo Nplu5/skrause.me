@@ -3,9 +3,10 @@ import {Link, useLoaderData} from "remix"
 
 import type {LoaderFunction} from "remix"
 import {db} from "~/utils/db.server"
+import {getMDXComponent} from "mdx-bundler/client"
+import {useMemo} from "react"
 
 type LoaderData = {
-  slug: string
   content: string
 }
 
@@ -19,10 +20,11 @@ export const loader: LoaderFunction = async ({params}) => {
 
 export default function PostRoute() {
   const post = useLoaderData<LoaderData>()
+  const Component = useMemo(() => getMDXComponent(post.content), [post.content])
   return (
     <div>
       <Link to="/blog">Back to Blog</Link>
-      <div dangerouslySetInnerHTML={{__html: post.content}} />
+      <Component />
     </div>
   )
 }

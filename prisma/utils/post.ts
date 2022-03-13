@@ -1,13 +1,12 @@
 import path from "path"
 import fs from "fs/promises"
-import parseFrontMatter from "front-matter"
 import invariant from "tiny-invariant"
-import {marked} from "marked"
+import {bundleMDX} from "mdx-bundler"
 
 const postsPath = path.join(__dirname, "..", "..", "content", "blog")
 
 export type CompletePost = PostMarkdownAttributes & {
-  html: string
+  content: string
   slug: string
 }
 
@@ -32,19 +31,18 @@ export async function getPosts(): Promise<CompletePost[]> {
       if (dirent.isFile()) {
         file = await fs.readFile(path.join(postsPath, dirent.name))
       } else {
-        file = await fs.readFile(path.join(postsPath, dirent.name, "index.md"))
+        file = await fs.readFile(path.join(postsPath, dirent.name, "index.mdx"))
       }
-      const {attributes, body} = parseFrontMatter(file.toString())
-      invariant(isValidPostAttributes(attributes), `${dirent.name} needs a 'title' attribute.`)
+      const {code, frontmatter} = await bundleMDX({source: file.toString()})
+      invariant(isValidPostAttributes(frontmatter), `${dirent.name} needs a 'title' attribute.`)
 
-      const html = marked(body)
       return {
         slug: dirent.name.replace(/\.md$/, ""),
-        title: attributes.title,
-        summary: attributes.summary,
-        published: attributes.published,
-        author: attributes.author,
-        html,
+        title: frontmatter.title,
+        summary: frontmatter.summary,
+        published: frontmatter.published,
+        author: frontmatter.author,
+        content: code,
       }
     }),
   )

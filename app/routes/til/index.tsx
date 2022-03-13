@@ -39,7 +39,11 @@ export default function TilOverview() {
       <div>Suche-Platzhalter</div>
       <div>
         {years.map((year) => {
-          return <NavLink to={`?${filterIdentifier}=${year}`}>{year}</NavLink>
+          return (
+            <NavLink to={`?${filterIdentifier}=${year}`} key={year}>
+              {year}
+            </NavLink>
+          )
         })}
       </div>
       <ul>

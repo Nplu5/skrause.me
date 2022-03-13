@@ -22,7 +22,6 @@ export const loader: LoaderFunction = async (): Promise<LoaderData> => {
 
 export default function Blog() {
   const data = useLoaderData<LoaderData>()
-  console.log(data)
   return (
     <>
       <h1>Blog</h1>

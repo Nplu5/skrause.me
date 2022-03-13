@@ -1,6 +1,7 @@
 import {PrismaClient} from "@prisma/client"
 import {getPosts} from "prisma/utils/post"
 import {getTils} from "prisma/utils/til"
+
 const prisma = new PrismaClient()
 
 async function seed() {
@@ -17,7 +18,7 @@ async function seedTils() {
         title: til.title,
         slug: til.slug,
         year: til.year,
-        content: til.html,
+        content: til.content,
         published: til.published,
         author: til.author,
         summary: til.summary,
@@ -34,7 +35,7 @@ async function seedPosts() {
       const data = {
         title: post.title,
         slug: post.slug,
-        content: post.html,
+        content: post.content,
         summary: post.summary,
         titlePictureUrl: post.titlePictureUrl ?? "",
         published: post.published,

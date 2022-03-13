@@ -1,13 +1,12 @@
 import path from "path"
 import fs from "fs/promises"
-import parseFrontMatter from "front-matter"
 import invariant from "tiny-invariant"
-import {marked} from "marked"
+import {bundleMDX} from "mdx-bundler"
 
 const tilsPath = path.join(__dirname, "..", "..", "content", "til")
 
 export type CompleteTil = TilMarkdownAttributes & {
-  html: string
+  content: string
   year: number
   slug: string
 }
@@ -41,20 +40,19 @@ export async function getTils() {
             .map(async (yearent) => {
               // Iterate over years folder content
               const file = await fs.readFile(path.join(yearPath, yearent.name))
-              const {attributes, body} = parseFrontMatter(file.toString())
+              const {code, frontmatter} = await bundleMDX({source: file.toString()})
               invariant(
-                isValidTilAttributes(attributes),
+                isValidTilAttributes(frontmatter),
                 `${yearent.name} needs a 'title' attribute. `,
               )
-              const html = marked(body)
               return {
                 slug: yearent.name.replace(/\.md$/, ""),
-                title: attributes.title,
+                title: frontmatter.title,
                 year: parseInt(year),
-                html,
-                summary: attributes.summary,
-                author: attributes.author,
-                published: attributes.published,
+                content: code,
+                summary: frontmatter.summary,
+                author: frontmatter.author,
+                published: frontmatter.published,
               }
             }),
         )
